@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Lab Benchmark</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Multi-Agent Research Lab</h1>
+            <p>Compare Single-Agent Baseline vs. Multi-Agent Workflow</p>
+        </header>
+
+        <div class="search-section">
+            <div class="input-group">
+                <input type="text" id="query" placeholder="Enter your research query here..." value="Explain GraphRAG state-of-the-art">
+                <button id="run-btn">Run Comparison</button>
+            </div>
+        </div>
+
+        <div class="results-grid">
+            <div class="result-card" id="baseline-card">
+                <div class="card-header">
+                    <h2>Baseline (Single Agent)</h2>
+                    <div class="status-badge" id="baseline-status">Ready</div>
+                </div>
+                <div class="metrics" id="baseline-metrics">
+                    <div class="metric">Latency: <span class="val">--</span></div>
+                    <div class="metric">Tokens: <span class="val">--</span></div>
+                    <div class="metric">Cost: <span class="val">--</span></div>
+                </div>
+                <div class="content" id="baseline-content">
+                    <p class="placeholder">Results will appear here...</p>
+                </div>
+            </div>
+
+            <div class="result-card" id="multi-agent-card">
+                <div class="card-header">
+                    <h2>Multi-Agent Workflow</h2>
+                    <div class="status-badge" id="multi-agent-status">Ready</div>
+                </div>
+                <div class="metrics" id="multi-agent-metrics">
+                    <div class="metric">Latency: <span class="val">--</span></div>
+                    <div class="metric">Tokens: <span class="val">--</span></div>
+                    <div class="metric">Cost: <span class="val">--</span></div>
+                </div>
+                <div class="content" id="multi-agent-content">
+                    <p class="placeholder">Results will appear here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

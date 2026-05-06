@@ -38,4 +38,5 @@ class BenchmarkMetrics(BaseModel):
     latency_seconds: float
     estimated_cost_usd: float | None = None
     quality_score: float | None = Field(default=None, ge=0, le=10)
+    total_tokens: int | None = None
     notes: str = ""

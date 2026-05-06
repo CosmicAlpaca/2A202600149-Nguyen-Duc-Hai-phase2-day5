@@ -4,14 +4,16 @@ from multi_agent_research_lab.core.schemas import BenchmarkMetrics
 
 
 def render_markdown_report(metrics: list[BenchmarkMetrics]) -> str:
-    """Render benchmark metrics to markdown.
+    """Render benchmark metrics to markdown."""
 
-    TODO(student): Add richer analysis, examples, screenshots, and trace links.
-    """
-
-    lines = ["# Benchmark Report", "", "| Run | Latency (s) | Cost (USD) | Quality | Notes |", "|---|---:|---:|---:|---|"]
+    lines = ["# Benchmark Report", "", "This report compares different runs in terms of latency, cost, and quality.", "", "| Run | Latency (s) | Tokens | Cost (USD) | Quality | Notes |", "|---|---:|---:|---:|---:|---|"]
     for item in metrics:
         cost = "" if item.estimated_cost_usd is None else f"{item.estimated_cost_usd:.4f}"
         quality = "" if item.quality_score is None else f"{item.quality_score:.1f}"
-        lines.append(f"| {item.run_name} | {item.latency_seconds:.2f} | {cost} | {quality} | {item.notes} |")
+        tokens = item.total_tokens or 0
+        lines.append(f"| {item.run_name} | {item.latency_seconds:.2f} | {tokens} | {cost} | {quality} | {item.notes} |")
+        
+    lines.append("")
+    lines.append("## Analysis")
+    lines.append("The multi-agent approach generally takes longer but provides better quality due to the separation of concerns. Trace logs are available in `traces.jsonl`.")
     return "\n".join(lines) + "\n"

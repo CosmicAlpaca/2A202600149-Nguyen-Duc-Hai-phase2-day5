@@ -18,6 +18,8 @@ console = Console()
 
 
 def _init() -> None:
+    from dotenv import load_dotenv
+    load_dotenv()
     settings = get_settings()
     configure_logging(settings.log_level)
 
@@ -31,12 +33,24 @@ def baseline(
     _init()
     request = ResearchQuery(query=query)
     state = ResearchState(request=request)
-    state.final_answer = (
-        "Baseline skeleton response. TODO(student): replace this with a real single-agent "
-        "implementation and record latency/cost/quality metrics."
-    )
-    console.print(Panel.fit(state.final_answer, title="Single-Agent Baseline"))
-
+    
+    from multi_agent_research_lab.services.llm_client import LLMClient
+    from multi_agent_research_lab.evaluation.benchmark import run_benchmark
+    from multi_agent_research_lab.evaluation.report import render_markdown_report
+    import os
+    
+    def single_agent_runner(q: str) -> ResearchState:
+        settings = get_settings()
+        llm = LLMClient(model_name=settings.gemini_model)
+        sys_prompt = "You are a helpful assistant. Research and answer the query."
+        response = llm.complete(sys_prompt, q)
+        state.final_answer = response.content
+        return state
+        
+    final_state, metrics = run_benchmark("baseline", query, single_agent_runner)
+    
+    console.print(Panel.fit(final_state.final_answer or "", title="Single-Agent Baseline"))
+    console.print(render_markdown_report([metrics]))
 
 @app.command("multi-agent")
 def multi_agent(
@@ -47,13 +61,21 @@ def multi_agent(
     _init()
     state = ResearchState(request=ResearchQuery(query=query))
     workflow = MultiAgentWorkflow()
+    
+    from multi_agent_research_lab.evaluation.benchmark import run_benchmark
+    from multi_agent_research_lab.evaluation.report import render_markdown_report
+    
+    def multi_agent_runner(q: str) -> ResearchState:
+        return workflow.run(state)
+        
     try:
-        result = workflow.run(state)
-    except StudentTodoError as exc:
-        console.print(Panel.fit(str(exc), title="Expected TODO", style="yellow"))
+        final_state, metrics = run_benchmark("multi-agent", query, multi_agent_runner)
+    except Exception as exc:
+        console.print(Panel.fit(str(exc), title="Error", style="red"))
         raise typer.Exit(code=2) from exc
-    console.print(result.model_dump_json(indent=2))
-
+        
+    console.print(Panel.fit(final_state.final_answer or "No answer", title="Multi-Agent Result"))
+    console.print(render_markdown_report([metrics]))
 
 if __name__ == "__main__":
     app()
